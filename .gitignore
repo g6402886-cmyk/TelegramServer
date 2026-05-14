@@ -1,0 +1,3 @@
+/telegramserver
+*.test
+coverage.out
