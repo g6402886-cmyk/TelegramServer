@@ -11,8 +11,6 @@ const (
 	ConstructorReqPQMulti = uint32(0xbe7e8ef1)
 	ConstructorReqPQ      = uint32(0x60469778)
 	ConstructorResPQ      = uint32(0x05162463)
-
-	DefaultKeyFingerprint = uint64(0xd09d1d85de64fd85)
 )
 
 var (
@@ -78,66 +76,17 @@ func ParseReqPQNonce(body []byte) ([16]byte, error) {
 }
 
 func EncodeResPQ(nonce [16]byte, serverNonce [16]byte, pq []byte, fingerprints []uint64) []byte {
-	writer := newTLWriter()
-	writer.uint32(ConstructorResPQ)
-	writer.bytes(nonce[:])
-	writer.bytes(serverNonce[:])
-	writer.string(pq)
-	writer.vectorLong(fingerprints)
-	return writer.buf
+	writer := NewWriter()
+	writer.UInt32(ConstructorResPQ)
+	writer.Raw(nonce[:])
+	writer.Raw(serverNonce[:])
+	writer.String(pq)
+	writer.VectorLong(fingerprints)
+	return writer.Bytes()
 }
 
 func RandomNonce() ([16]byte, error) {
 	var nonce [16]byte
 	_, err := rand.Read(nonce[:])
 	return nonce, err
-}
-
-type tlWriter struct {
-	buf []byte
-}
-
-func newTLWriter() *tlWriter {
-	return &tlWriter{buf: make([]byte, 0, 128)}
-}
-
-func (w *tlWriter) uint32(v uint32) {
-	var tmp [4]byte
-	binary.LittleEndian.PutUint32(tmp[:], v)
-	w.buf = append(w.buf, tmp[:]...)
-}
-
-func (w *tlWriter) uint64(v uint64) {
-	var tmp [8]byte
-	binary.LittleEndian.PutUint64(tmp[:], v)
-	w.buf = append(w.buf, tmp[:]...)
-}
-
-func (w *tlWriter) bytes(v []byte) {
-	w.buf = append(w.buf, v...)
-}
-
-func (w *tlWriter) string(v []byte) {
-	if len(v) < 254 {
-		w.buf = append(w.buf, byte(len(v)))
-		w.buf = append(w.buf, v...)
-		for len(w.buf)%4 != 0 {
-			w.buf = append(w.buf, 0)
-		}
-		return
-	}
-
-	w.buf = append(w.buf, 254, byte(len(v)), byte(len(v)>>8), byte(len(v)>>16))
-	w.buf = append(w.buf, v...)
-	for len(w.buf)%4 != 0 {
-		w.buf = append(w.buf, 0)
-	}
-}
-
-func (w *tlWriter) vectorLong(values []uint64) {
-	w.uint32(0x1cb5c415)
-	w.uint32(uint32(len(values)))
-	for _, value := range values {
-		w.uint64(value)
-	}
 }

@@ -46,7 +46,7 @@ func TestUnsupportedConstructor(t *testing.T) {
 func TestEncodeResPQ(t *testing.T) {
 	var nonce [16]byte
 	var serverNonce [16]byte
-	body := EncodeResPQ(nonce, serverNonce, DefaultPQ, []uint64{DefaultKeyFingerprint})
+	body := EncodeResPQ(nonce, serverNonce, DefaultPQ, []uint64{1})
 
 	if got := binary.LittleEndian.Uint32(body[:4]); got != ConstructorResPQ {
 		t.Fatalf("constructor = 0x%08x", got)

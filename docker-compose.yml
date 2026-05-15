@@ -1,0 +1,13 @@
+services:
+  telegramserver:
+    build: .
+    container_name: telegramserver
+    restart: unless-stopped
+    ports:
+      - "10443:10443"
+    volumes:
+      - telegramserver-data:/data
+
+volumes:
+  telegramserver-data:
+    name: telegramserver-data

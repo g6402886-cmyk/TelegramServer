@@ -1,3 +1,5 @@
 /telegramserver
+server_rsa_private.pem
+server_rsa_public.pem
 *.test
 coverage.out
