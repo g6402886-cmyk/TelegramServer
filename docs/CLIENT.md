@@ -22,7 +22,14 @@ Use:
 
 The client also contains built-in server public key fingerprints in `Handshake.cpp`.
 
-Generate a server keypair:
+If you run via Docker Compose, the server creates the keypair automatically in the `telegramserver-data` volume. Copy `server_rsa_public.pem` out with:
+
+```bash
+docker cp telegramserver:/data/server_rsa_public.pem ./server_rsa_public.pem
+docker compose logs | grep rsa_fingerprint
+```
+
+For local non-Docker development, generate a server keypair:
 
 ```bash
 openssl genrsa 2048 > server_rsa_private.pem
@@ -32,7 +39,7 @@ openssl rsa -in server_rsa_private.pem -RSAPublicKey_out -out server_rsa_public.
 Start the server once and copy the logged fingerprint:
 
 ```bash
-go run ./cmd/telegramserver -addr :10443 -rsa-key server_rsa_private.pem
+go run ./cmd/telegramserver -addr :10443 -rsa-key server_rsa_private.pem -rsa-public-key server_rsa_public.pem
 ```
 
 Then patch `TMessagesProj/jni/tgnet/Handshake.cpp`:

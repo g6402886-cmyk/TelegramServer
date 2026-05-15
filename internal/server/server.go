@@ -12,8 +12,8 @@ import (
 	"github.com/g6402886-cmyk/TelegramServer/internal/transport"
 )
 
-func ListenAndServe(addr string, rsaKeyPath string) error {
-	privateKey, err := mtproto.LoadRSAPrivateKey(rsaKeyPath)
+func ListenAndServe(addr string, rsaKeyPath string, rsaPublicKeyPath string) error {
+	privateKey, err := mtproto.LoadOrCreateRSAKey(rsaKeyPath, rsaPublicKeyPath)
 	if err != nil {
 		return err
 	}

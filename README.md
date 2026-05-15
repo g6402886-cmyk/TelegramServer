@@ -21,7 +21,27 @@ Not implemented yet:
 - Encrypted message containers and API RPC handlers.
 - Persistent users, sessions, chats, and updates.
 
-## RSA key
+## VPS quick start
+
+For a VPS, use Docker Compose from the repository root:
+
+```bash
+git clone https://github.com/g6402886-cmyk/TelegramServer.git
+cd TelegramServer
+docker compose up -d
+```
+
+The container listens on TCP port `10443`. On the first start it automatically creates `/data/server_rsa_private.pem` and `/data/server_rsa_public.pem` in the Docker volume `telegramserver-data`.
+
+View logs:
+
+```bash
+docker compose logs -f
+```
+
+The startup log prints `rsa_fingerprint=...`; copy that fingerprint and `server_rsa_public.pem` into the Android client as described in `docs/CLIENT.md`.
+
+## RSA key for local Go run
 
 Generate a development RSA keypair before running:
 
@@ -35,13 +55,13 @@ Do not commit `server_rsa_private.pem`. Patch the Android client with `server_rs
 ## Run
 
 ```bash
-go run ./cmd/telegramserver -addr :10443 -rsa-key server_rsa_private.pem
+go run ./cmd/telegramserver -addr :10443 -rsa-key server_rsa_private.pem -rsa-public-key server_rsa_public.pem
 ```
 
 Port `10443` does not require root. You can choose another port if needed:
 
 ```bash
-go run ./cmd/telegramserver -addr :15443 -rsa-key server_rsa_private.pem
+go run ./cmd/telegramserver -addr :15443 -rsa-key server_rsa_private.pem -rsa-public-key server_rsa_public.pem
 ```
 
 ## Test

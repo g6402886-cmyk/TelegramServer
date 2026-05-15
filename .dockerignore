@@ -1,0 +1,6 @@
+.git
+telegramserver
+*.test
+coverage.out
+server_rsa_private.pem
+server_rsa_public.pem
